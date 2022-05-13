@@ -1,0 +1,245 @@
+import cv2
+import numpy as np
+
+from matplotlib import pyplot as plt
+
+
+#read the image
+img= cv2.imread("Car.jpg")
+#display the Image
+cv2.imshow('Original Image', img)
+# Image
+greyscaleimage=cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+#Save Image to Disk
+status = cv2.imwrite('C:/Users/MuhammadShahzaib/Downloads/CV Projects/objectrecognizer/image_grey.jpg',greyscaleimage)
+
+#Resize the image
+
+
+# Setting the points for cropped image
+width = 740
+height = img.shape[0]  # keep original height
+dim = (width, height)
+# resize image
+resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+cv2.imshow('Resize Image', resized)
+#Get the Image Shape
+dimensions = img.shape
+print(dimensions)
+text=cv2.putText(resized, 'Shahzaib',org=(150, 250), fontFace=cv2.FONT_HERSHEY_TRIPLEX, fontScale=3, color=(0, 255, 0),thickness=3)
+cv2.imshow('Text on  Image', text)
+#Draw a line on image
+start_point = (330, 10)
+
+# End coordinate, here (250, 250)
+# represents the bottom right corner of image
+end_point = (60, 520)
+
+# Green color in BGR
+color=(50,205,50)
+lineimage=cv2. line(img, start_point, end_point, color,3)
+cv2.imshow('Line on  Image', lineimage)
+#Draw a Rectangle on Image
+center_coordinates = (120, 70)
+# Radius of circle
+radius = 60
+# Blue color in BGR
+color = (255, 0, 0)
+# Line thickness of 2 px
+thickness = 2
+Circle=cv2.circle(img,center_coordinates, radius, color,thickness)
+cv2.imshow('Circle on  Image', Circle)
+#draw the rectangle on image
+rectangle=cv2.rectangle(img, pt1=(100,200), pt2=(300,300), color=(150,220,215), thickness=10)
+cv2.imshow('rectangle on  Image', rectangle)
+#draw the square on image
+square=cv2.rectangle(img, pt1=(400,400), pt2=(500,500), color=(0,0,255), thickness=10)
+cv2.imshow('square on  Image', square)
+#Convert RGB Image to Grayscale
+cv2.imshow('Greyscale Image', greyscaleimage)
+#Convert Grayscale image to RGB image
+
+
+Bgb= cv2.cvtColor(greyscaleimage, cv2.COLOR_GRAY2RGB)
+cv2.imshow('RGB  Image', Bgb)
+# 13. Capture livestream from Webcam
+# cap = cv2.VideoCapture(0)
+#
+# # Check if the webcam is opened correctly
+# if not cap.isOpened():
+#     raise IOError("Cannot open webcam")
+#
+# while True:
+#     ret, frame = cap.read()
+#     frame = cv2.resize(frame, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_AREA)
+#     cv2.imshow('Input', frame)
+#
+#     c = cv2.waitKey(1)
+#     if c == 27:
+#         break
+#
+# cap.release()
+# 14 Read video from disk
+# cap = cv2.VideoCapture('Test.mp4')
+#
+#
+# while(cap.isOpened()):
+#   ret, frame = cap.read()
+#   gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+#   cv2.imshow('frame',gray)
+#   if cv2.waitKey(1) & 0xFF == ord('q'):
+#     break
+#
+# cap.release()
+
+# 15. Blur an image
+man= cv2.imread("man.jpg")
+image_blurred = cv2.blur(man, ksize=(25, 55))
+cv2.imshow('blur Image', image_blurred)
+# 16. Detect Edges of objects in an image
+edges = cv2.Canny(img,100,200)
+cv2.imshow('edge Image', edges)
+# 17. Detect Contours in an image
+Image= cv2.imread("man.jpg")
+image = cv2.cvtColor(Image, cv2.COLOR_BGR2RGB)
+gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+ret, binary = cv2.threshold(gray, 127,255, cv2.THRESH_BINARY_INV)
+contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+image = cv2.drawContours(image, contours, -1, (0,255,0), 2)
+cv2.imshow('Contour detection using green channels only', image)
+
+# 18. Crop an image
+# Cropping an image
+cropped_image = Image[80:280, 250:430]
+cv2.imshow("cropped Image", cropped_image)
+
+# 19. Sharpen the image
+kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
+im = cv2.filter2D(Image, -1, kernel)
+cv2.imshow("sharp Image", im)
+# 20. Apply an identity Filter on an image
+kernelid = np.array([[0,0,0], [0,1,0], [0,0,0]])
+
+imp = cv2.filter2D(Image, -1, kernelid)
+cv2.imshow("identity Image", imp)
+# 21. Apply Gaussian Filter on an image
+dst = cv2.GaussianBlur(Image, (5, 5), cv2.BORDER_DEFAULT)
+
+# display input and output image
+gaussian=cv2.imshow("Gaussian Smoothing", np.hstack((Image, dst)))
+# 22. Apply Median Filer on an image
+median = cv2.medianBlur(Image,5)
+cv2.imshow("median  filter Image", median)
+# 13. Apply Average Filter on an image
+blur = cv2.blur(img,(5,5))
+cv2.imshow("average filter  Image", blur)
+
+# 24. Draw Histogram an image
+
+hist = cv2.calcHist([greyscaleimage],[0],None,[256],[0,256])
+plt.hist(greyscaleimage.ravel(),256,[0,256])
+plt.title('Histogram for gray scale picture')
+plt.show()
+# 25. Perform template matching on an image
+# Read the main image
+img_rgb = cv2.imread('man.jpg')
+
+# Convert it to grayscale
+img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
+
+# Read the template
+template = cv2.imread('template.jpg', 0)
+
+# Store width and height of template in w and h
+w, h = template.shape[::-1]
+
+# Perform match operations.
+res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
+
+# Specify a threshold
+threshold = 0.8
+
+# Store the coordinates of matched area in a numpy array
+loc = np.where(res >= threshold)
+
+# Draw a rectangle around the matched region.
+for pt in zip(*loc[::-1]):
+    cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 255, 255), 2)
+
+# Show the final image with the matched area.
+cv2.imshow('Detected', img_rgb)
+
+# 26. Perform xNegative of an image
+img_bgr = cv2.imread('man.jpg', 1)
+cv2.imshow("img_bgr  Image", img_bgr)
+color = ('b', 'g', 'r')
+for i, col in enumerate(color):
+    his = cv2.calcHist([img_bgr], [i], None, [256], [0, 256])
+    plt.plot(his, color=col)
+    plt.xlim([0, 256])
+plt.show()
+# 27. Perform Thresholding on an image
+image1 = cv2.imread('man.jpg')
+
+# cv2.cvtColor is applied over the
+# image input with applied parameters
+# to convert the image in grayscale
+img = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+
+# applying different thresholding
+# techniques on the input image
+# all pixels value above 120 will
+# be set to 255
+ret, thresh1 = cv2.threshold(img, 120, 255, cv2.THRESH_BINARY)
+ret, thresh2 = cv2.threshold(img, 120, 255, cv2.THRESH_BINARY_INV)
+ret, thresh3 = cv2.threshold(img, 120, 255, cv2.THRESH_TRUNC)
+ret, thresh4 = cv2.threshold(img, 120, 255, cv2.THRESH_TOZERO)
+ret, thresh5 = cv2.threshold(img, 120, 255, cv2.THRESH_TOZERO_INV)
+
+# the window showing output images
+# with the corresponding thresholding
+# techniques applied to the input images
+cv2.imshow('Binary Threshold', thresh1)
+cv2.imshow('Binary Threshold Inverted', thresh2)
+cv2.imshow('Truncated Threshold', thresh3)
+cv2.imshow('Set to 0', thresh4)
+cv2.imshow('Set to 0 Inverted', thresh5)
+
+
+# 28. Apply Log Transformation on an image
+image = cv2.imread('man.jpg')
+
+# Apply log transformation method
+c = 255 / np.log(1 + np.max(image))
+log_image = c * (np.log(image + 1))
+
+# Specify the data type so that
+# float value will be converted to int
+log_image = np.array(log_image, dtype=np.uint8)
+
+# Display both images
+plt.imshow(image)
+plt.show()
+plt.imshow(log_image)
+plt.show()
+# 29. Apply Power Law Transformation on an image
+
+imgman = cv2.imread('man.jpg', cv2.IMREAD_UNCHANGED)
+for gamma in [0.1, 0.5, 1.2, 2.2]:
+    # Apply gamma correction.
+    gamma_corrected = np.array(255 * (imgman / 255) ** gamma, dtype='uint8')
+
+    # Save edited images.
+    cv2.imwrite('gamma_transformed' + str(gamma) + '.jpg', gamma_corrected)
+    cv2.imshow('gamma_transformed' + str(gamma) + '.jpg', gamma_corrected)
+
+
+
+
+
+
+
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
